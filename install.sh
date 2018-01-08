@@ -7,3 +7,6 @@ pip3 install --user mitmproxy
 
 # install BeautifulSoup
 pip3 install beautifulsoup4
+
+# install python-nmap
+pip3 install python-nmap

